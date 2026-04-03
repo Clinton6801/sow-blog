@@ -68,7 +68,7 @@ export default function RichEditor({ value, onChange }: RichEditorProps) {
   const addLink = useCallback(() => {
     const url = window.prompt('Enter URL:')
     if (url && editor) {
-      editor.chain().focus().extendMarkToLink({ href: url }).run()
+      editor.chain().focus().setLink({ href: url }).run()
     }
   }, [editor])
 
