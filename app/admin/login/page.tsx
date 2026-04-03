@@ -1,9 +1,10 @@
-export const dynamic = 'force-dynamic'
 'use client'
-import { useState } from 'react'
+
+import { useState, Suspense } from 'react' // 1. Added Suspense
 import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function AdminLoginPage() {
+// Move your logic into a separate component
+function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const from = searchParams.get('from') || '/admin/dashboard'
@@ -36,7 +37,6 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-screen bg-paper flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        {/* Masthead */}
         <div className="text-center mb-8">
           <h1 className="font-blackletter text-5xl text-ink">The SOW Chronicle</h1>
           <p className="text-[10px] tracking-[3px] uppercase text-gray-400 mt-1">Admin Panel</p>
@@ -77,11 +77,19 @@ export default function AdminLoginPage() {
             </button>
           </form>
         </div>
-
         <p className="text-center text-xs text-gray-400 mt-4">
           Seat of Wisdom Schools Press Club
         </p>
       </div>
     </div>
+  )
+}
+
+// 2. The default export now just wraps the form
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   )
 }
