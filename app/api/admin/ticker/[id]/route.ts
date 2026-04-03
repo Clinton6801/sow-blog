@@ -15,10 +15,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const { error } = await supabaseAdminconst _auth = await requireAdmin(req)
+  const _auth = await requireAdmin(req)
   if (_auth) return _auth
   // proceed
-  supabaseAdmin.from('x').delete().eq('id', params.id)
+  const { error } = await supabaseAdmin.from('ticker_items').delete().eq('id', params.id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
 }
