@@ -51,6 +51,8 @@ export default function ArticleForm({ initial = {} }: ArticleFormProps) {
     status: initial.status || 'draft',
     featured: initial.featured || false,
     tags: (initial as any).tags || [],
+    video_url: (initial as any).video_url || '',
+    video_type: (initial as any).video_type || 'youtube',
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -183,6 +185,26 @@ export default function ArticleForm({ initial = {} }: ArticleFormProps) {
               placeholder="Staff Writer"
               className="w-full border border-gray-300 px-3 py-2 text-sm bg-white outline-none focus:border-ink" />
           </div>
+        </div>
+
+        <div>
+          <label className="block text-[10px] tracking-[2px] uppercase font-bold mb-1">
+            Video (optional) <span className="font-normal normal-case tracking-normal text-gray-400">— paste a YouTube or Vimeo link</span>
+          </label>
+          <div className="flex gap-2">
+            <select name="video_type" value={form.video_type as string} onChange={handleChange}
+              className="border border-gray-300 px-3 py-2 text-sm bg-white outline-none focus:border-ink flex-shrink-0">
+              <option value="youtube">YouTube</option>
+              <option value="vimeo">Vimeo</option>
+              <option value="upload">Direct URL</option>
+            </select>
+            <input name="video_url" value={form.video_url as string} onChange={handleChange}
+              placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
+              className="flex-1 border border-gray-300 px-3 py-2 text-sm bg-white outline-none focus:border-ink" />
+          </div>
+          {(form.video_url as string) && (
+            <p className="text-[10px] text-green-600 mt-1">✓ Video will appear below the cover image in the article.</p>
+          )}
         </div>
 
         <div>

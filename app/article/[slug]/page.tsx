@@ -5,6 +5,7 @@ import Comments from '@/components/article/Comments'
 import NewsletterBox from '@/components/article/NewsletterBox'
 import ShareButtons from '@/components/article/ShareButtons'
 import ArticleCard from '@/components/article/ArticleCard'
+import VideoEmbed from '@/components/article/VideoEmbed'
 import Link from 'next/link'
 import Image from 'next/image'
 import { format } from 'date-fns'
@@ -104,6 +105,15 @@ export default async function ArticlePage({ params }: Props) {
                 <Image src={article.cover_image_url} alt={article.title} width={800} height={450} priority
                   className="w-full h-full object-cover" />
               </div>
+            )}
+
+            {/* Video embed */}
+            {(article as any).video_url && (
+              <VideoEmbed
+                url={(article as any).video_url}
+                type={(article as any).video_type || 'youtube'}
+                title={article.title}
+              />
             )}
 
             {/* Content */}
