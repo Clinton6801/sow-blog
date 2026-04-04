@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import ImageUploader from './ImageUploader'
+import VideoUploader from './VideoUploader'
 import TagsInput from './TagsInput'
 import { getReadingTime } from '@/lib/readingTime'
 import type { Category } from '@/types'
@@ -188,23 +189,15 @@ export default function ArticleForm({ initial = {} }: ArticleFormProps) {
         </div>
 
         <div>
-          <label className="block text-[10px] tracking-[2px] uppercase font-bold mb-1">
-            Video (optional) <span className="font-normal normal-case tracking-normal text-gray-400">— paste a YouTube or Vimeo link</span>
+          <label className="block text-[10px] tracking-[2px] uppercase font-bold mb-2">
+            Video (optional)
           </label>
-          <div className="flex gap-2">
-            <select name="video_type" value={form.video_type as string} onChange={handleChange}
-              className="border border-gray-300 px-3 py-2 text-sm bg-white outline-none focus:border-ink flex-shrink-0">
-              <option value="youtube">YouTube</option>
-              <option value="vimeo">Vimeo</option>
-              <option value="upload">Direct URL</option>
-            </select>
-            <input name="video_url" value={form.video_url as string} onChange={handleChange}
-              placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
-              className="flex-1 border border-gray-300 px-3 py-2 text-sm bg-white outline-none focus:border-ink" />
-          </div>
-          {(form.video_url as string) && (
-            <p className="text-[10px] text-green-600 mt-1">✓ Video will appear below the cover image in the article.</p>
-          )}
+          <VideoUploader
+            videoUrl={form.video_url as string}
+            videoType={form.video_type as string}
+            onVideoUrl={url => setForm(f => ({ ...f, video_url: url }))}
+            onVideoType={type => setForm(f => ({ ...f, video_type: type }))}
+          />
         </div>
 
         <div>
