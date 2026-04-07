@@ -5,6 +5,7 @@ import NewsletterBox from '@/components/article/NewsletterBox'
 import Ticker from '@/components/layout/Ticker'
 import Pagination from '@/components/ui/Pagination'
 import GeniusSection from '@/components/article/GeniusSection'
+import GalleryCarousel from '@/components/article/GalleryCarousel'
 import Link from 'next/link'
 import Image from 'next/image'
 import { format } from 'date-fns'
@@ -20,13 +21,15 @@ const PAGE_SIZE = 9
 export default async function HomePage({ searchParams }: { searchParams: { page?: string } }) {
   const page = Math.max(1, parseInt(searchParams.page || '1', 10))
 
-  const [featured, tickerData, countData] = await Promise.all([
+  const [featured, tickerData, countData, carouselData] = await Promise.all([
     getFeaturedArticle(),
     supabase.from('ticker_items').select('text').eq('active', true).order('sort_order'),
     supabase.from('articles').select('id', { count: 'exact' }).eq('status', 'published'),
+    supabase.from('gallery_photos').select('id, title, image_url, event_name').order('created_at', { ascending: false }).limit(10),
   ])
 
   const tickerItems = tickerData.data?.map((t: any) => t.text) || []
+  const carouselPhotos = carouselData.data || []
   const totalCount = (countData.count || 0) - (featured ? 1 : 0)
   const totalPages = Math.ceil(totalCount / PAGE_SIZE)
 
@@ -116,6 +119,9 @@ export default async function HomePage({ searchParams }: { searchParams: { page?
 
         {/* GENIUS OF THE WEEK */}
         <GeniusSection />
+
+        {/* PHOTO HIGHLIGHTS CAROUSEL */}
+        {carouselPhotos.length > 0 && <GalleryCarousel photos={carouselPhotos} />}
 
         {/* LATEST — 3 col grid */}
         {topThree.length > 0 && (

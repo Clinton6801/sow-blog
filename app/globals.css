@@ -156,3 +156,8 @@
 
 /* Dark mode admin */
 .dark .bg-sow-blue        { background-color: #1e3a8a; }
+
+@keyframes progress-bar {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
