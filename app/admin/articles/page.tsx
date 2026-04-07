@@ -7,8 +7,7 @@ export const revalidate = 0
 
 export default async function AdminArticlesPage() {
   const { data: articles } = await supabaseAdmin
-    .from('articles')
-    .select('*, categories(*)')
+    .from('articles').select('*, categories(*)')
     .order('created_at', { ascending: false })
 
   const statusColor: Record<string, string> = {
@@ -18,16 +17,41 @@ export default async function AdminArticlesPage() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 md:p-6">
+      <div className="flex items-center justify-between mb-5">
         <div>
-          <h1 className="font-serif text-3xl font-black">Articles</h1>
-          <p className="text-gray-500 text-sm mt-1">{articles?.length || 0} total</p>
+          <h1 className="font-serif text-2xl md:text-3xl font-black">Articles</h1>
+          <p className="text-gray-500 text-sm mt-0.5">{articles?.length || 0} total</p>
         </div>
-        <Link href="/admin/articles/new" className="btn-primary text-sm">+ New Article</Link>
+        <Link href="/admin/articles/new" className="btn-primary text-xs md:text-sm px-3 py-2">
+          + New
+        </Link>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded overflow-hidden">
+      {/* Mobile card list */}
+      <div className="md:hidden space-y-3">
+        {articles?.map((article: any) => (
+          <div key={article.id} className="bg-white border border-gray-200 rounded p-3">
+            <div className="flex items-start justify-between gap-2 mb-1">
+              <p className="font-bold text-sm leading-snug line-clamp-2 flex-1">{article.title}</p>
+              <span className={`text-[9px] tracking-[1px] uppercase font-bold px-2 py-0.5 rounded flex-shrink-0 ${statusColor[article.status]}`}>
+                {article.status}
+              </span>
+            </div>
+            <p className="text-xs text-gray-400 mb-2">
+              {article.categories?.name || 'No category'} · {article.views} views · {format(new Date(article.created_at), 'MMM d, yyyy')}
+            </p>
+            <div className="flex gap-3">
+              <Link href={`/admin/articles/${article.id}/edit`} className="text-xs text-sow-blue font-bold hover:underline">Edit</Link>
+              <Link href={`/article/${article.slug}`} target="_blank" className="text-xs text-gray-400 hover:underline">View</Link>
+              <DeleteArticleButton articleId={article.id} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden md:block bg-white border border-gray-200 rounded overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
@@ -44,9 +68,7 @@ export default async function AdminArticlesPage() {
               <tr key={article.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3">
                   <p className="font-bold leading-snug line-clamp-1 max-w-xs">{article.title}</p>
-                  {article.featured && (
-                    <span className="text-[9px] tracking-wide uppercase text-amber-600 font-bold">★ Featured</span>
-                  )}
+                  {article.featured && <span className="text-[9px] tracking-wide uppercase text-amber-600 font-bold">★ Featured</span>}
                 </td>
                 <td className="px-4 py-3 text-gray-500 text-xs">{article.categories?.name || '—'}</td>
                 <td className="px-4 py-3">
@@ -60,10 +82,8 @@ export default async function AdminArticlesPage() {
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex gap-3 items-center">
-                    <Link href={`/admin/articles/${article.id}/edit`}
-                      className="text-xs text-sow-blue hover:underline font-bold">Edit</Link>
-                    <Link href={`/article/${article.slug}`} target="_blank"
-                      className="text-xs text-gray-400 hover:underline">View</Link>
+                    <Link href={`/admin/articles/${article.id}/edit`} className="text-xs text-sow-blue hover:underline font-bold">Edit</Link>
+                    <Link href={`/article/${article.slug}`} target="_blank" className="text-xs text-gray-400 hover:underline">View</Link>
                     <DeleteArticleButton articleId={article.id} />
                   </div>
                 </td>
@@ -74,9 +94,7 @@ export default async function AdminArticlesPage() {
         {(!articles || articles.length === 0) && (
           <div className="text-center py-12 text-gray-400">
             <p className="italic">No articles yet.</p>
-            <Link href="/admin/articles/new" className="text-sm text-sow-blue font-bold hover:underline mt-2 inline-block">
-              Write your first article →
-            </Link>
+            <Link href="/admin/articles/new" className="text-sm text-sow-blue font-bold hover:underline mt-2 inline-block">Write your first →</Link>
           </div>
         )}
       </div>
