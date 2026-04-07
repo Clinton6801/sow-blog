@@ -1,8 +1,9 @@
 'use client'
-import { useState } from 'react'
+import { useState, Suspense } from 'react' // Added Suspense import
 import { useRouter, useSearchParams } from 'next/navigation'
 
-export default function AdminLoginPage() {
+// 1. Move your original logic into a separate component function
+function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const from = searchParams.get('from') || '/admin/dashboard'
@@ -35,7 +36,6 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-screen bg-paper flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        {/* Masthead */}
         <div className="text-center mb-8">
           <h1 className="font-blackletter text-5xl text-ink">The SOW Chronicle</h1>
           <p className="text-[10px] tracking-[3px] uppercase text-gray-400 mt-1">Admin Panel</p>
@@ -82,5 +82,14 @@ export default function AdminLoginPage() {
         </p>
       </div>
     </div>
+  )
+}
+
+// 2. Export the main page wrapped in Suspense
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-paper" />}>
+      <LoginContent />
+    </Suspense>
   )
 }
