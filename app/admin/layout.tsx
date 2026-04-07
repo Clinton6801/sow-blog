@@ -31,7 +31,6 @@ const navGroups = [
   },
 ]
 
-export { navGroups }
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
