@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import ImageUploader from './ImageUploader'
 import VideoUploader from './VideoUploader'
 import TagsInput from './TagsInput'
+import ArticleGalleryUploader, { GalleryImage } from './ArticleGalleryUploader'
 import { getReadingTime } from '@/lib/readingTime'
 import type { Category } from '@/types'
 
@@ -54,6 +55,7 @@ export default function ArticleForm({ initial = {} }: ArticleFormProps) {
     tags: (initial as any).tags || [],
     video_url: (initial as any).video_url || '',
     video_type: (initial as any).video_type || 'youtube',
+    gallery_images: (initial as any).gallery_images || [],
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -197,6 +199,19 @@ export default function ArticleForm({ initial = {} }: ArticleFormProps) {
             videoType={form.video_type as string}
             onVideoUrl={url => setForm(f => ({ ...f, video_url: url }))}
             onVideoType={type => setForm(f => ({ ...f, video_type: type }))}
+          />
+        </div>
+
+        <div>
+          <label className="block text-[10px] tracking-[2px] uppercase font-bold mb-2">
+            Article Photo Gallery (optional)
+            <span className="font-normal normal-case tracking-normal text-gray-400 ml-2">
+              — multiple images shown inside the article, with lightbox and download
+            </span>
+          </label>
+          <ArticleGalleryUploader
+            images={form.gallery_images as GalleryImage[]}
+            onChange={imgs => setForm(f => ({ ...f, gallery_images: imgs }))}
           />
         </div>
 

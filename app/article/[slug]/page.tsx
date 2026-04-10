@@ -6,6 +6,7 @@ import NewsletterBox from '@/components/article/NewsletterBox'
 import ShareButtons from '@/components/article/ShareButtons'
 import ArticleCard from '@/components/article/ArticleCard'
 import VideoEmbed from '@/components/article/VideoEmbed'
+import ArticleGallery from '../../../components/article/ArticleGallery'
 import Link from 'next/link'
 import Image from 'next/image'
 import { format } from 'date-fns'
@@ -118,6 +119,14 @@ export default async function ArticlePage({ params }: Props) {
 
             {/* Content */}
             <div className="article-content" dangerouslySetInnerHTML={{ __html: article.content }} />
+
+            {/* Article photo gallery */}
+            {(article as any).gallery_images?.length > 0 && (
+              <ArticleGallery
+                images={(article as any).gallery_images}
+                title={article.title}
+              />
+            )}
 
             {/* Share buttons */}
             <div className="mt-8 pt-4 border-t border-gray-200 no-print">
