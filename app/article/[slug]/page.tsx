@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import Masthead from '@/components/layout/Masthead'
 import Footer from '@/components/layout/Footer'
 import Comments from '@/components/article/Comments'
@@ -7,6 +8,9 @@ import ShareButtons from '@/components/article/ShareButtons'
 import ArticleCard from '@/components/article/ArticleCard'
 import VideoEmbed from '@/components/article/VideoEmbed'
 import ArticleGallery from '../../../components/article/ArticleGallery'
+import ReadingProgress from '@/components/article/ReadingProgress'
+import BackToTop from '@/components/ui/BackToTop'
+import WhatsAppShare from '@/components/article/WhatsAppShare'
 import Link from 'next/link'
 import Image from 'next/image'
 import { format } from 'date-fns'
@@ -14,9 +18,43 @@ import { Eye } from 'lucide-react'
 import { getArticleBySlug, getApprovedComments, getPublishedArticles, incrementViews } from '@/lib/queries'
 import { getCategoryBadgeClass, getCategoryAccentColor } from '@/lib/categoryColors'
 
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://sowchronicle.com'
+
 interface Props { params: { slug: string } }
 
 export const revalidate = 60
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const article = await getArticleBySlug(params.slug)
+  if (!article) return { title: 'Article Not Found' }
+
+  const description = article.excerpt || article.content.replace(/<[^>]+>/g, '').slice(0, 160)
+  const ogImage = article.cover_image_url
+    ? [{ url: article.cover_image_url, width: 1200, height: 630, alt: article.title }]
+    : []
+
+  return {
+    title: `${article.title} | The SOW Chronicle`,
+    description,
+    authors: [{ name: article.author_name }],
+    openGraph: {
+      title: article.title,
+      description,
+      type: 'article',
+      url: `${BASE_URL}/article/${article.slug}`,
+      images: ogImage,
+      publishedTime: article.published_at || undefined,
+      authors: [article.author_name],
+      siteName: 'The SOW Chronicle',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description,
+      images: article.cover_image_url ? [article.cover_image_url] : [],
+    },
+  }
+}
 
 export default async function ArticlePage({ params }: Props) {
   const [article, recentArticles] = await Promise.all([
@@ -43,6 +81,7 @@ export default async function ArticlePage({ params }: Props) {
 
   return (
     <>
+      <ReadingProgress />
       <Masthead />
 
       {/* Category colour bar */}
@@ -75,28 +114,28 @@ export default async function ArticlePage({ params }: Props) {
             </h1>
 
             {article.excerpt && (
-              <p className="font-serif italic text-xl text-gray-700 border-l-4 pl-4 mb-4 leading-relaxed py-2"
-                style={{ borderColor: accentColor }}>
+              <p className="font-serif italic text-xl border-l-4 pl-4 mb-4 leading-relaxed py-2"
+                style={{ borderColor: accentColor, color: 'var(--text-secondary)' }}>
                 {article.excerpt}
               </p>
             )}
 
             {/* Byline */}
-            <div className="flex items-center gap-3 py-3 border-t border-b border-gray-200 mb-6">
+            <div className="flex items-center gap-3 py-3 border-t border-b mb-6" style={{ borderColor: 'var(--border-light)' }}>
               <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
                 style={{ backgroundColor: accentColor }}>
-                {article.author_name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                {article.author_name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2)}
               </div>
               <div className="flex-1">
-                <p className="text-sm font-bold">{article.author_name}</p>
-                <p className="text-[10px] text-gray-400 uppercase tracking-wide">
+                <p className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>{article.author_name}</p>
+                <p className="text-[10px] uppercase tracking-wide" style={{ color: 'var(--text-faint)' }}>
                   {article.author_role}
                   {article.published_at && <> · {format(new Date(article.published_at), 'MMMM d, yyyy')}</>}
                 </p>
               </div>
-              <div className="flex items-center gap-1 text-sm text-gray-400">
-                <Eye size={14} />
-                <span>{article.views + 1} views</span>
+              <div className="flex items-center gap-3 text-sm" style={{ color: 'var(--text-faint)' }}>
+                <span className="flex items-center gap-1"><Eye size={14} />{article.views + 1} views</span>
+                {article.reading_time && <span>{article.reading_time} min read</span>}
               </div>
             </div>
 
@@ -109,10 +148,10 @@ export default async function ArticlePage({ params }: Props) {
             )}
 
             {/* Video embed */}
-            {(article as any).video_url && (
+            {article.video_url && (
               <VideoEmbed
-                url={(article as any).video_url}
-                type={(article as any).video_type || 'youtube'}
+                url={article.video_url}
+                type={article.video_type || 'youtube'}
                 title={article.title}
               />
             )}
@@ -121,27 +160,41 @@ export default async function ArticlePage({ params }: Props) {
             <div className="article-content" dangerouslySetInnerHTML={{ __html: article.content }} />
 
             {/* Article photo gallery */}
-            {(article as any).gallery_images?.length > 0 && (
+            {article.gallery_images && article.gallery_images.length > 0 && (
               <ArticleGallery
-                images={(article as any).gallery_images}
+                images={article.gallery_images}
                 title={article.title}
               />
             )}
 
             {/* Share buttons */}
-            <div className="mt-8 pt-4 border-t border-gray-200 no-print">
+            <div className="mt-8 pt-4 border-t no-print" style={{ borderColor: 'var(--border-light)' }}>
               <ShareButtons title={article.title} />
             </div>
 
+            {/* Tags */}
+            {article.tags && article.tags.length > 0 && (
+              <div className="mt-6 pt-4 border-t flex flex-wrap gap-2 items-center no-print" style={{ borderColor: 'var(--border-light)' }}>
+                <span className="text-[10px] tracking-[2px] uppercase font-bold" style={{ color: 'var(--text-muted)' }}>Tags:</span>
+                {article.tags.map((tag: string) => (
+                  <Link key={tag} href={`/tags/${encodeURIComponent(tag)}`}
+                    className="text-[11px] px-2.5 py-1 font-bold hover:bg-sow-blue hover:text-white transition-colors border"
+                    style={{ borderColor: 'var(--border-medium)', color: 'var(--text-secondary)', backgroundColor: 'var(--bg-subtle)' }}>
+                    #{tag}
+                  </Link>
+                ))}
+              </div>
+            )}
+
             {/* Author link */}
-            <div className="mt-4 p-4 border-l-4 no-print" style={{ borderColor: accentColor, backgroundColor: accentColor + '10' }}>
-              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Written by</p>
+            <div className="mt-4 p-4 border-l-4 no-print" style={{ borderColor: accentColor, backgroundColor: accentColor + '15' }}>
+              <p className="text-xs uppercase tracking-wide mb-1" style={{ color: 'var(--text-muted)' }}>Written by</p>
               <Link href={`/author/${encodeURIComponent(article.author_name)}`}
                 className="font-bold hover:underline" style={{ color: accentColor }}>
                 {article.author_name}
               </Link>
-              {article.author_role && <span className="text-xs text-gray-500 ml-2">· {article.author_role}</span>}
-              <p className="text-xs text-gray-500 mt-1">
+              {article.author_role && <span className="text-xs ml-2" style={{ color: 'var(--text-muted)' }}>· {article.author_role}</span>}
+              <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
                 <Link href={`/author/${encodeURIComponent(article.author_name)}`}
                   className="hover:underline" style={{ color: accentColor }}>
                   View all articles by this author →
@@ -177,17 +230,17 @@ export default async function ArticlePage({ params }: Props) {
                 </div>
                 <div className="space-y-3">
                   {mostRead.map((a, i) => (
-                    <div key={a.id} className="flex gap-3 items-start border-b border-gray-100 pb-3 last:border-0">
+                    <div key={a.id} className="flex gap-3 items-start border-b pb-3 last:border-0" style={{ borderColor: 'var(--border-light)' }}>
                       <span className="text-2xl font-black text-sow-red/20 font-serif leading-none flex-shrink-0 w-6">
                         {i + 1}
                       </span>
                       <div>
                         <Link href={`/article/${a.slug}`}>
-                          <p className="font-serif text-sm font-bold leading-snug hover:underline hover:text-sow-blue transition-colors">
+                          <p className="font-serif text-sm font-bold leading-snug hover:underline hover:text-sow-blue transition-colors" style={{ color: 'var(--text-primary)' }}>
                             {a.title}
                           </p>
                         </Link>
-                        <span className="flex items-center gap-1 text-[10px] text-gray-400 mt-0.5">
+                        <span className="flex items-center gap-1 text-[10px] mt-0.5" style={{ color: 'var(--text-faint)' }}>
                           <Eye size={9} /> {a.views} views
                         </span>
                       </div>
@@ -201,6 +254,8 @@ export default async function ArticlePage({ params }: Props) {
           </aside>
         </div>
       </main>
+      <BackToTop />
+      <WhatsAppShare title={article.title} />
       <Footer />
     </>
   )

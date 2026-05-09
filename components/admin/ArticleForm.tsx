@@ -31,6 +31,11 @@ interface ArticleFormProps {
     author_role?: string
     status?: string
     featured?: boolean
+    video_url?: string
+    video_type?: string
+    gallery_images?: GalleryImage[]
+    tags?: string[]
+    reading_time?: number | null
   }
 }
 
@@ -52,10 +57,10 @@ export default function ArticleForm({ initial = {} }: ArticleFormProps) {
     author_role: initial.author_role || 'Staff Writer',
     status: initial.status || 'draft',
     featured: initial.featured || false,
-    tags: (initial as any).tags || [],
-    video_url: (initial as any).video_url || '',
-    video_type: (initial as any).video_type || 'youtube',
-    gallery_images: (initial as any).gallery_images || [],
+    tags: initial.tags || [],
+    video_url: initial.video_url || '',
+    video_type: initial.video_type || 'youtube',
+    gallery_images: initial.gallery_images || [],
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')

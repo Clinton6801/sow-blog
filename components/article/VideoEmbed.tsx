@@ -2,7 +2,7 @@
 
 interface VideoEmbedProps {
   url: string
-  type: 'youtube' | 'vimeo' | 'upload'
+  type: 'youtube' | 'vimeo' | 'upload' | null | undefined
   title?: string
 }
 

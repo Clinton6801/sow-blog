@@ -6,6 +6,7 @@ const config: Config = {
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
@@ -14,17 +15,22 @@ const config: Config = {
         blackletter: ['var(--font-unifraktur)', 'cursive'],
       },
       colors: {
-        ink: '#1a1a2e',
-        paper: '#fffef9',
-        cream: '#fff8f0',
+        // Static brand colours
+        ink:   '#1a1a2e',
+        paper: '#fafaf7',
+        cream: '#f4f3ef',
         sow: {
           blue:   '#1e3a8a',
           red:    '#dc2626',
-          gold:   '#f59e0b',
-          green:  '#16a34a',
+          gold:   '#d97706',
+          green:  '#15803d',
           purple: '#7c3aed',
-          teal:   '#0891b2',
+          teal:   '#0e7490',
         },
+        // Semantic tokens that follow dark/light mode via CSS variables
+        surface: 'var(--bg-surface)',
+        subtle:  'var(--bg-subtle)',
+        muted:   'var(--bg-muted)',
       },
     },
   },

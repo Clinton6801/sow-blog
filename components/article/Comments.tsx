@@ -43,37 +43,37 @@ export default function Comments({ articleId, initialComments }: CommentsProps) 
   }
 
   return (
-    <section className="mt-10 pt-6 border-t-2 border-ink">
-      <div className="section-heading">
+    <section className="mt-10 pt-6 border-t-2" style={{ borderColor: 'var(--border-medium)' }}>
+      <div className="section-heading section-default">
         <span className="section-heading-label">Comments ({comments.length})</span>
         <div className="section-heading-rule" />
       </div>
 
       {/* Existing comments */}
       {comments.length === 0 ? (
-        <p className="text-sm text-gray-500 italic mb-6">No comments yet. Be the first to respond.</p>
+        <p className="text-sm italic mb-6" style={{ color: 'var(--text-muted)' }}>No comments yet. Be the first to respond.</p>
       ) : (
         <div className="space-y-4 mb-8">
           {comments.map((c) => (
-            <div key={c.id} className="border-l-2 border-ink pl-4">
+            <div key={c.id} className="border-l-2 pl-4" style={{ borderColor: 'var(--border-medium)' }}>
               <div className="flex items-baseline gap-2 mb-1">
-                <span className="font-bold text-sm">{c.commenter_name}</span>
+                <span className="font-bold text-sm" style={{ color: 'var(--text-primary)' }}>{c.commenter_name}</span>
                 {c.commenter_class && (
-                  <span className="text-[10px] tracking-wide uppercase text-gray-500">{c.commenter_class}</span>
+                  <span className="text-[10px] tracking-wide uppercase" style={{ color: 'var(--text-muted)' }}>{c.commenter_class}</span>
                 )}
-                <span className="text-[10px] text-gray-400">
+                <span className="text-[10px]" style={{ color: 'var(--text-faint)' }}>
                   {format(new Date(c.created_at), 'MMM d, yyyy')}
                 </span>
               </div>
-              <p className="text-sm text-gray-700 leading-relaxed">{c.content}</p>
+              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{c.content}</p>
             </div>
           ))}
         </div>
       )}
 
       {/* Leave a comment */}
-      <div className="bg-cream border border-ink/20 p-5">
-        <h4 className="text-[10px] tracking-[2px] uppercase font-bold mb-4 pb-2 border-b border-ink/20">
+      <div className="p-5 border" style={{ backgroundColor: 'var(--bg-subtle)', borderColor: 'var(--border-medium)' }}>
+        <h4 className="text-[10px] tracking-[2px] uppercase font-bold mb-4 pb-2 border-b" style={{ color: 'var(--text-primary)', borderColor: 'var(--border-medium)' }}>
           Leave a Comment
         </h4>
 
@@ -90,14 +90,16 @@ export default function Comments({ articleId, initialComments }: CommentsProps) 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your name *"
-                className="border border-ink/30 px-3 py-2 text-sm bg-paper outline-none focus:border-ink"
+                style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-medium)', color: 'var(--text-primary)' }}
+                className="border px-3 py-2 text-sm outline-none focus:border-sow-blue"
               />
               <input
                 type="text"
                 value={studentClass}
                 onChange={(e) => setStudentClass(e.target.value)}
                 placeholder="Your class (e.g. SS2A)"
-                className="border border-ink/30 px-3 py-2 text-sm bg-paper outline-none focus:border-ink"
+                style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-medium)', color: 'var(--text-primary)' }}
+                className="border px-3 py-2 text-sm outline-none focus:border-sow-blue"
               />
             </div>
             <textarea
@@ -106,13 +108,14 @@ export default function Comments({ articleId, initialComments }: CommentsProps) 
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Write your comment..."
-              className="w-full border border-ink/30 px-3 py-2 text-sm bg-paper outline-none focus:border-ink resize-none"
+              style={{ backgroundColor: 'var(--bg-surface)', borderColor: 'var(--border-medium)', color: 'var(--text-primary)' }}
+              className="w-full border px-3 py-2 text-sm outline-none focus:border-sow-blue resize-none"
             />
             {status === 'error' && (
               <p className="text-xs text-red-600">{message}</p>
             )}
             <div className="flex items-center justify-between">
-              <p className="text-[10px] text-gray-400 italic">Comments are reviewed before publication.</p>
+              <p className="text-[10px] italic" style={{ color: 'var(--text-faint)' }}>Comments are reviewed before publication.</p>
               <button
                 type="submit"
                 disabled={status === 'loading'}

@@ -12,9 +12,10 @@ const navLinks = [
   { label: 'Sports',       href: '/category/sports',     color: 'hover:bg-sow-red' },
   { label: 'Arts',         href: '/category/arts-culture', color: 'hover:bg-sow-purple' },
   { label: 'Opinion',      href: '/category/opinion',    color: 'hover:bg-sow-teal' },
-  { label: 'Events',       href: '/events',           color: 'hover:bg-sow-gold' },
-  { label: '⭐ Genius',    href: '/genius',           color: 'hover:bg-sow-gold' },
-  { label: 'Gallery',      href: '/gallery',          color: 'hover:bg-sow-purple' },
+  { label: 'Events',       href: '/events',              color: 'hover:bg-sow-gold' },
+  { label: '⭐ Genius',    href: '/genius',              color: 'hover:bg-sow-gold' },
+  { label: '🏫 Clubs',     href: '/clubs',               color: 'hover:bg-sow-green' },
+  { label: 'Gallery',      href: '/gallery',             color: 'hover:bg-sow-purple' },
   { label: 'About',        href: '/about',               color: 'hover:bg-ink' },
   { label: 'Contact',      href: '/contact',             color: 'hover:bg-ink' },
   { label: '✏ Submit',    href: '/submit',              color: 'hover:bg-sow-red' },
@@ -40,7 +41,7 @@ export default function Masthead() {
   })
 
   return (
-    <header className="bg-paper border-b-4 border-sow-blue">
+    <header style={{ backgroundColor: 'var(--bg-surface)', borderBottom: '4px solid var(--sow-blue)' }}>
       {/* Colour bar */}
       <div className="h-1.5 flex">
         <div className="flex-1 bg-sow-blue" />
@@ -52,20 +53,20 @@ export default function Masthead() {
       </div>
 
       {/* Top strip */}
-      <div className="px-4 py-1.5 flex justify-between items-center text-[10px] tracking-widest uppercase text-gray-500 max-w-6xl mx-auto">
+      <div className="px-4 py-1.5 flex justify-between items-center text-[10px] tracking-widest uppercase max-w-6xl mx-auto" style={{ color: 'var(--text-muted)' }}>
         <span>{today}</span>
         <span className="hidden md:block">Seat of Wisdom Schools · Ibadan, Oyo State</span>
         <span>Free Copy · Vol. I</span>
       </div>
 
       {/* Masthead title */}
-      <div className="text-center py-3 px-4 border-t border-b border-sow-blue/20">
+      <div className="text-center py-3 px-4 border-t border-b" style={{ borderColor: 'var(--border-light)' }}>
         <Link href="/" className="block group">
           <h1 className="font-blackletter text-5xl md:text-7xl leading-none tracking-tight text-sow-blue group-hover:text-sow-red transition-colors duration-300">
             The SOW Chronicle
           </h1>
         </Link>
-        <p className="text-[10px] tracking-[4px] uppercase text-gray-500 mt-1">
+        <p className="text-[10px] tracking-[4px] uppercase mt-1" style={{ color: 'var(--text-muted)' }}>
           Press Club · Seat of Wisdom Group of Schools · Reporting with Truth &amp; Clarity
         </p>
       </div>

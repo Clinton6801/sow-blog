@@ -28,6 +28,20 @@ export default async function HomePage({ searchParams }: { searchParams: { page?
     supabase.from('gallery_photos').select('id, title, image_url, event_name').order('created_at', { ascending: false }).limit(10),
   ])
 
+  // Fetch category spotlights (only on page 1)
+  const [sportsData, academicsData, artsData] = page === 1 ? await Promise.all([
+    supabase.from('articles').select('*, categories(*)').eq('status', 'published')
+      .eq('categories.slug', 'sports').order('published_at', { ascending: false }).limit(3),
+    supabase.from('articles').select('*, categories(*)').eq('status', 'published')
+      .eq('categories.slug', 'academics').order('published_at', { ascending: false }).limit(3),
+    supabase.from('articles').select('*, categories(*)').eq('status', 'published')
+      .eq('categories.slug', 'arts-culture').order('published_at', { ascending: false }).limit(3),
+  ]) : [{ data: [] }, { data: [] }, { data: [] }]
+
+  const sportsArticles = (sportsData.data || []) as any[]
+  const academicsArticles = (academicsData.data || []) as any[]
+  const artsArticles = (artsData.data || []) as any[]
+
   const tickerItems = tickerData.data?.map((t: any) => t.text) || []
   const carouselPhotos = carouselData.data || []
   const totalCount = (countData.count || 0) - (featured ? 1 : 0)
@@ -97,7 +111,7 @@ export default async function HomePage({ searchParams }: { searchParams: { page?
                     </h2>
                   </Link>
                   {featured.excerpt && (
-                    <p className="font-serif italic text-gray-600 text-base leading-relaxed mb-4">{featured.excerpt}</p>
+                    <p className="font-serif italic text-base leading-relaxed mb-4" style={{ color: 'var(--text-secondary)' }}>{featured.excerpt}</p>
                   )}
                 </div>
                 <div>
@@ -165,13 +179,13 @@ export default async function HomePage({ searchParams }: { searchParams: { page?
                 </div>
                 <div className="space-y-3">
                   {mostRead.map((a: any, i: number) => (
-                    <div key={a.id} className="flex gap-3 items-start border-b border-gray-100 pb-3 last:border-0">
+                    <div key={a.id} className="flex gap-3 items-start border-b pb-3 last:border-0" style={{ borderColor: 'var(--border-light)' }}>
                       <span className="text-2xl font-black text-sow-red/20 font-serif leading-none w-6 flex-shrink-0">{i + 1}</span>
                       <div>
                         <Link href={`/article/${a.slug}`}>
-                          <p className="font-serif text-sm font-bold leading-snug hover:text-sow-blue hover:underline transition-colors">{a.title}</p>
+                          <p className="font-serif text-sm font-bold leading-snug hover:text-sow-blue hover:underline transition-colors" style={{ color: 'var(--text-primary)' }}>{a.title}</p>
                         </Link>
-                        <span className="flex items-center gap-1 text-[10px] text-gray-400 mt-0.5">
+                        <span className="flex items-center gap-1 text-[10px] mt-0.5" style={{ color: 'var(--text-faint)' }}>
                           <Eye size={9} /> {a.views} views
                         </span>
                       </div>
@@ -197,9 +211,10 @@ export default async function HomePage({ searchParams }: { searchParams: { page?
                   { label: '📅 Events',         href: '/category/events',       color: 'bg-sow-gold' },
                 ].map(cat => (
                   <Link key={cat.href} href={cat.href}
-                    className="flex items-center gap-2 py-2 border-b border-gray-100 text-sm hover:text-sow-blue transition-colors group font-medium">
+                    className="flex items-center gap-2 py-2 border-b text-sm hover:text-sow-blue transition-colors group font-medium"
+                    style={{ borderColor: 'var(--border-light)', color: 'var(--text-primary)' }}>
                     <span>{cat.label}</span>
-                    <span className="ml-auto text-gray-300 group-hover:text-sow-blue">→</span>
+                    <span className="ml-auto group-hover:text-sow-blue" style={{ color: 'var(--text-faint)' }}>→</span>
                   </Link>
                 ))}
               </div>
@@ -220,6 +235,60 @@ export default async function HomePage({ searchParams }: { searchParams: { page?
             <NewsletterBox />
           </aside>
         </div>
+
+        {/* CATEGORY SPOTLIGHTS — only on page 1 */}
+        {page === 1 && (
+          <div className="mt-10 space-y-10 border-t-2 border-sow-blue pt-8">
+
+            {/* Sports */}
+            {sportsArticles.length > 0 && (
+              <section>
+                <div className="section-heading section-red mb-5">
+                  <span className="section-heading-label">⚽ Latest in Sports</span>
+                  <div className="section-heading-rule" />
+                  <Link href="/category/sports" className="text-[10px] tracking-[1.5px] uppercase font-bold text-sow-red hover:underline whitespace-nowrap">
+                    All Sports →
+                  </Link>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {sportsArticles.map((a: any) => <ArticleCard key={a.id} article={a} />)}
+                </div>
+              </section>
+            )}
+
+            {/* Academics */}
+            {academicsArticles.length > 0 && (
+              <section>
+                <div className="section-heading section-green mb-5">
+                  <span className="section-heading-label">📚 Latest in Academics</span>
+                  <div className="section-heading-rule" />
+                  <Link href="/category/academics" className="text-[10px] tracking-[1.5px] uppercase font-bold text-sow-green hover:underline whitespace-nowrap">
+                    All Academics →
+                  </Link>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {academicsArticles.map((a: any) => <ArticleCard key={a.id} article={a} />)}
+                </div>
+              </section>
+            )}
+
+            {/* Arts & Culture */}
+            {artsArticles.length > 0 && (
+              <section>
+                <div className="section-heading section-purple mb-5">
+                  <span className="section-heading-label">🎭 Arts & Culture</span>
+                  <div className="section-heading-rule" />
+                  <Link href="/category/arts-culture" className="text-[10px] tracking-[1.5px] uppercase font-bold text-sow-purple hover:underline whitespace-nowrap">
+                    All Arts →
+                  </Link>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {artsArticles.map((a: any) => <ArticleCard key={a.id} article={a} />)}
+                </div>
+              </section>
+            )}
+          </div>
+        )}
       </main>
       <Footer />
     </>

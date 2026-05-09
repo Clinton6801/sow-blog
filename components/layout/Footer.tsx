@@ -48,6 +48,7 @@ export default function Footer() {
                 ['🎭 Arts & Culture','/category/arts-culture'],
                 ['💬 Opinion',      '/category/opinion'],
                 ['📅 Events',       '/category/events'],
+                ['🏫 Clubs',        '/clubs'],
                 ['🖼 Gallery',      '/gallery'],
               ].map(([label, href]) => (
                 <li key={href}>

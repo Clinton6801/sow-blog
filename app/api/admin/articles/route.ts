@@ -6,7 +6,11 @@ export async function POST(req: NextRequest) {
   const auth = await requireAdmin(req)
   if (auth) return auth
   const body = await req.json()
-  const { title, slug, excerpt, content, cover_image_url, category_id, author_name, author_role, status, featured } = body
+  const {
+    title, slug, excerpt, content, cover_image_url, category_id,
+    author_name, author_role, status, featured,
+    video_url, video_type, gallery_images, tags, reading_time,
+  } = body
 
   if (!title || !slug || !content) {
     return NextResponse.json({ error: 'Title, slug, and content are required.' }, { status: 400 })
@@ -21,6 +25,11 @@ export async function POST(req: NextRequest) {
     status: status || 'draft',
     featured: featured || false,
     published_at: status === 'published' ? new Date().toISOString() : null,
+    video_url: video_url || null,
+    video_type: video_type || null,
+    gallery_images: gallery_images || [],
+    tags: tags || [],
+    reading_time: reading_time || null,
   }).select().single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

@@ -17,10 +17,10 @@ export default function ArticleCard({ article, variant = 'default' }: ArticleCar
 
   if (variant === 'compact') {
     return (
-      <div className="border-b border-gray-100 pb-3 mb-3 last:border-0 last:mb-0 last:pb-0 group">
+      <div className="border-b pb-3 mb-3 last:border-0 last:mb-0 last:pb-0 group" style={{ borderColor: 'var(--border-light)' }}>
         <div className="flex gap-3">
           {article.cover_image_url && (
-            <div className="w-16 h-12 flex-shrink-0 overflow-hidden bg-gray-200">
+            <div className="w-16 h-12 flex-shrink-0 overflow-hidden" style={{ backgroundColor: 'var(--bg-muted)' }}>
               <Image src={article.cover_image_url} alt={article.title} width={64} height={48}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
             </div>
@@ -31,14 +31,14 @@ export default function ArticleCard({ article, variant = 'default' }: ArticleCar
             )}
             <Link href={`/article/${article.slug}`}>
               <h3 className="font-serif text-sm font-bold leading-snug hover:underline line-clamp-2"
-                style={{ '--tw-decoration-color': accentColor } as any}>
+                style={{ color: 'var(--text-primary)' }}>
                 {article.title}
               </h3>
             </Link>
             <div className="flex items-center gap-2 mt-0.5">
-              <p className="text-[10px] text-gray-400">{date}</p>
+              <p className="text-[10px]" style={{ color: 'var(--text-faint)' }}>{date}</p>
               {article.views > 0 && (
-                <span className="flex items-center gap-0.5 text-[10px] text-gray-400">
+                <span className="flex items-center gap-0.5 text-[10px]" style={{ color: 'var(--text-faint)' }}>
                   <Eye size={9} /> {article.views}
                 </span>
               )}
@@ -51,9 +51,9 @@ export default function ArticleCard({ article, variant = 'default' }: ArticleCar
 
   if (variant === 'horizontal') {
     return (
-      <div className="flex gap-4 py-4 border-b border-gray-100 last:border-0 group">
+      <div className="flex gap-4 py-4 border-b last:border-0 group" style={{ borderColor: 'var(--border-light)' }}>
         {article.cover_image_url ? (
-          <div className="w-28 h-20 flex-shrink-0 overflow-hidden bg-gray-200">
+          <div className="w-28 h-20 flex-shrink-0 overflow-hidden" style={{ backgroundColor: 'var(--bg-muted)' }}>
             <Image src={article.cover_image_url} alt={article.title} width={112} height={80}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
           </div>
@@ -68,10 +68,10 @@ export default function ArticleCard({ article, variant = 'default' }: ArticleCar
             <span className={`category-badge ${badgeClass} mb-1 inline-block`}>{article.categories.name}</span>
           )}
           <Link href={`/article/${article.slug}`}>
-            <h3 className="font-serif text-base font-bold leading-snug hover:underline mb-1">{article.title}</h3>
+            <h3 className="font-serif text-base font-bold leading-snug hover:underline mb-1" style={{ color: 'var(--text-primary)' }}>{article.title}</h3>
           </Link>
-          <div className="flex items-center gap-3 text-[10px] text-gray-400 uppercase tracking-wide">
-            <span className="font-bold text-ink">{article.author_name}</span>
+          <div className="flex items-center gap-3 text-[10px] uppercase tracking-wide" style={{ color: 'var(--text-muted)' }}>
+            <span className="font-bold" style={{ color: 'var(--text-primary)' }}>{article.author_name}</span>
             {date && <span>{date}</span>}
             {article.views > 0 && (
               <span className="flex items-center gap-0.5"><Eye size={9} /> {article.views}</span>
@@ -109,15 +109,15 @@ export default function ArticleCard({ article, variant = 'default' }: ArticleCar
       </Link>
 
       {article.excerpt && (
-        <p className="text-sm text-gray-600 leading-relaxed mb-2 line-clamp-2 font-serif italic">{article.excerpt}</p>
+        <p className="text-sm leading-relaxed mb-2 line-clamp-2 font-serif italic" style={{ color: 'var(--text-secondary)' }}>{article.excerpt}</p>
       )}
 
-      <div className="flex items-center gap-3 text-[10px] text-gray-500 tracking-wide uppercase">
-        <span className="font-bold text-ink">{article.author_name}</span>
+      <div className="flex items-center gap-3 text-[10px] tracking-wide uppercase" style={{ color: 'var(--text-muted)' }}>
+        <span className="font-bold" style={{ color: 'var(--text-primary)' }}>{article.author_name}</span>
         {date && <span>{date}</span>}
-        {(article as any).reading_time && (
+        {article.reading_time && (
           <span className="flex items-center gap-0.5">
-            <Clock size={9} /> {(article as any).reading_time} min
+            <Clock size={9} /> {article.reading_time} min
           </span>
         )}
         {article.views > 0 && (
@@ -125,11 +125,12 @@ export default function ArticleCard({ article, variant = 'default' }: ArticleCar
         )}
       </div>
       {/* Tags */}
-      {(article as any).tags?.length > 0 && (
+      {article.tags && article.tags.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-2">
-          {((article as any).tags as string[]).slice(0, 3).map((tag: string) => (
+          {article.tags.slice(0, 3).map((tag: string) => (
             <Link key={tag} href={`/tags/${encodeURIComponent(tag)}`}
-              className="text-[9px] px-1.5 py-0.5 bg-gray-100 text-gray-500 hover:bg-sow-teal hover:text-white rounded-full transition-colors">
+              className="text-[9px] px-1.5 py-0.5 rounded-full transition-colors"
+              style={{ backgroundColor: 'var(--bg-subtle)', color: 'var(--text-muted)' }}>
               #{tag}
             </Link>
           ))}

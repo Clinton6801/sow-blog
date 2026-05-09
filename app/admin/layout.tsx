@@ -19,6 +19,7 @@ const navGroups = [
       { label: '⭐ Genius of Week',  href: '/admin/genius' },
       { label: '🖼 Gallery',         href: '/admin/gallery' },
       { label: '📅 Events',          href: '/admin/events' },
+      { label: '🏫 Clubs',           href: '/admin/clubs' },
       { label: '⚡ Ticker',          href: '/admin/ticker' },
     ],
   },
@@ -27,6 +28,7 @@ const navGroups = [
     items: [
       { label: '🏷 Categories',      href: '/admin/categories' },
       { label: '📧 Newsletter',      href: '/admin/newsletter' },
+      { label: '📬 Contact Messages', href: '/admin/contact' },
     ],
   },
 ]

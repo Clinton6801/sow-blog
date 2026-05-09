@@ -2,72 +2,144 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
 :root {
-  --font-playfair: 'Playfair Display', Georgia, serif;
-  --font-source-sans: 'Source Sans 3', system-ui, sans-serif;
+  --font-playfair:   'Playfair Display', Georgia, serif;
+  --font-source-sans:'Source Sans 3', system-ui, sans-serif;
   --font-unifraktur: 'UnifrakturMaguntia', cursive;
+
+  /* Brand palette — kept intentional but softened */
   --sow-blue:   #1e3a8a;
   --sow-red:    #dc2626;
-  --sow-gold:   #f59e0b;
-  --sow-green:  #16a34a;
+  --sow-gold:   #d97706;
+  --sow-green:  #15803d;
   --sow-purple: #7c3aed;
-  --sow-teal:   #0891b2;
+  --sow-teal:   #0e7490;
+
+  /* Semantic surface tokens — light mode */
+  --bg-page:       #fafaf7;
+  --bg-surface:    #ffffff;
+  --bg-subtle:     #f4f3ef;
+  --bg-muted:      #ede9e0;
+  --text-primary:  #1a1a2e;
+  --text-secondary:#4b5563;
+  --text-muted:    #6b7280;
+  --text-faint:    #9ca3af;
+  --border-light:  #e5e3dc;
+  --border-medium: #d1cfc6;
 }
 
+/* ============================================================
+   DARK MODE TOKENS
+   ============================================================ */
+.dark {
+  --bg-page:       #111118;
+  --bg-surface:    #1a1a28;
+  --bg-subtle:     #22223a;
+  --bg-muted:      #2a2a42;
+  --text-primary:  #eeeee8;
+  --text-secondary:#c9c9c0;
+  --text-muted:    #9ca3af;
+  --text-faint:    #6b7280;
+  --border-light:  #2e2e48;
+  --border-medium: #3a3a58;
+}
+
+/* ============================================================
+   BASE RESETS
+   ============================================================ */
 @layer base {
   * { box-sizing: border-box; }
-  body { background-color: #fffef9; color: #1a1a2e; }
 
-  /* Article prose */
-  .article-content p  { @apply mb-4 leading-relaxed text-[17px]; }
-  .article-content h2 { @apply font-serif text-2xl font-bold mt-8 mb-3 text-sow-blue; }
-  .article-content h3 { @apply font-serif text-xl font-bold mt-6 mb-2; }
-  .article-content blockquote {
-    @apply border-l-4 border-sow-gold pl-4 my-6 italic text-lg text-gray-700 font-serif bg-amber-50 py-3 pr-4;
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
-  .article-content ul  { @apply list-disc pl-6 mb-4 space-y-1; }
-  .article-content ol  { @apply list-decimal pl-6 mb-4 space-y-1; }
-  .article-content a   { @apply underline text-sow-blue font-semibold; }
-  .article-content hr  { @apply border-sow-gold/40 my-6; }
 
-  /* TipTap */
+  /* ── Article prose ── */
+  .article-content p {
+    @apply mb-4 leading-relaxed text-[17px];
+    color: var(--text-secondary);
+  }
+  .article-content h2 {
+    @apply font-serif text-2xl font-bold mt-8 mb-3;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--border-light);
+    padding-bottom: 0.25rem;
+  }
+  .article-content h3 {
+    @apply font-serif text-xl font-bold mt-6 mb-2;
+    color: var(--text-primary);
+  }
+  .article-content blockquote {
+    @apply border-l-4 pl-4 my-6 italic text-lg font-serif py-3 pr-4;
+    border-color: var(--sow-gold);
+    background-color: var(--bg-subtle);
+    color: var(--text-secondary);
+  }
+  .article-content ul  { @apply list-disc pl-6 mb-4 space-y-1; color: var(--text-secondary); }
+  .article-content ol  { @apply list-decimal pl-6 mb-4 space-y-1; color: var(--text-secondary); }
+  .article-content a   { @apply underline font-semibold; color: var(--sow-blue); }
+  .article-content hr  { @apply my-6; border-color: var(--border-medium); }
+  .article-content img { @apply max-w-full my-4 rounded; }
+  .article-content strong { color: var(--text-primary); }
+
+  /* ── TipTap editor ── */
   .ProseMirror p          { @apply mb-3 leading-relaxed; }
-  .ProseMirror h2         { @apply text-xl font-bold font-serif mt-6 mb-2 text-sow-blue; }
+  .ProseMirror h2         { @apply text-xl font-bold font-serif mt-6 mb-2; color: var(--sow-blue); }
   .ProseMirror h3         { @apply text-lg font-bold font-serif mt-4 mb-1; }
-  .ProseMirror blockquote { @apply border-l-4 border-sow-gold pl-4 my-4 italic text-gray-600 bg-amber-50 py-2 pr-4; }
-  .ProseMirror ul         { @apply list-disc pl-6 mb-3 space-y-1; }
-  .ProseMirror ol         { @apply list-decimal pl-6 mb-3 space-y-1; }
-  .ProseMirror a          { @apply underline text-sow-blue; }
-  .ProseMirror hr         { @apply border-gray-300 my-4; }
-  .ProseMirror img        { @apply max-w-full my-4; }
+  .ProseMirror blockquote {
+    @apply border-l-4 pl-4 my-4 italic py-2 pr-4;
+    border-color: var(--sow-gold);
+    background-color: var(--bg-subtle);
+    color: var(--text-secondary);
+  }
+  .ProseMirror ul  { @apply list-disc pl-6 mb-3 space-y-1; }
+  .ProseMirror ol  { @apply list-decimal pl-6 mb-3 space-y-1; }
+  .ProseMirror a   { @apply underline; color: var(--sow-blue); }
+  .ProseMirror hr  { @apply my-4; border-color: var(--border-medium); }
+  .ProseMirror img { @apply max-w-full my-4; }
   .ProseMirror p.is-editor-empty:first-child::before {
     content: attr(data-placeholder);
-    @apply text-gray-400 pointer-events-none float-left h-0;
+    @apply pointer-events-none float-left h-0;
+    color: var(--text-faint);
   }
   .ProseMirror:focus { outline: none; }
 }
 
+/* ============================================================
+   COMPONENT LAYER
+   ============================================================ */
 @layer components {
-  /* Colourful category badges */
+
+  /* ── Category badges ── */
   .category-badge {
     @apply inline-block text-[9px] tracking-[2px] uppercase font-bold px-2 py-[3px] text-white;
   }
-  .badge-news     { background-color: var(--sow-blue); }
-  .badge-academics{ background-color: var(--sow-green); }
-  .badge-sports   { background-color: var(--sow-red); }
-  .badge-arts     { background-color: var(--sow-purple); }
-  .badge-opinion  { background-color: var(--sow-teal); }
-  .badge-events   { background-color: var(--sow-gold); color: #1a1a2e !important; }
-  .badge-default  { background-color: #1a1a2e; }
+  .badge-news      { background-color: var(--sow-blue); }
+  .badge-academics { background-color: var(--sow-green); }
+  .badge-sports    { background-color: var(--sow-red); }
+  .badge-arts      { background-color: var(--sow-purple); }
+  .badge-opinion   { background-color: var(--sow-teal); }
+  .badge-events    { background-color: var(--sow-gold); color: #1a1a2e !important; }
+  .badge-default   { background-color: var(--text-primary); }
 
-  .newspaper-rule       { @apply border-t border-ink; }
-  .newspaper-rule-thick { @apply border-t-2 border-ink; }
+  /* ── Dividers ── */
+  .newspaper-rule       { border-top: 1px solid var(--border-medium); }
+  .newspaper-rule-thick { border-top: 2px solid var(--text-primary); }
 
+  /* ── Section headings ── */
   .section-heading       { @apply flex items-center gap-3 mb-4; }
-  .section-heading-label { @apply text-white text-[10px] tracking-[2.5px] uppercase font-bold px-3 py-1 whitespace-nowrap; }
+  .section-heading-label {
+    @apply text-white text-[10px] tracking-[2.5px] uppercase font-bold px-3 py-1 whitespace-nowrap;
+  }
   .section-heading-rule  { @apply flex-1 border-t-2; }
 
-  /* Section colours */
   .section-blue   .section-heading-label { background-color: var(--sow-blue); }
   .section-blue   .section-heading-rule  { border-color: var(--sow-blue); }
   .section-red    .section-heading-label { background-color: var(--sow-red); }
@@ -80,26 +152,113 @@
   .section-purple .section-heading-rule  { border-color: var(--sow-purple); }
   .section-teal   .section-heading-label { background-color: var(--sow-teal); }
   .section-teal   .section-heading-rule  { border-color: var(--sow-teal); }
-  .section-default .section-heading-label { background-color: #1a1a2e; }
-  .section-default .section-heading-rule  { border-color: #1a1a2e; }
+  .section-default .section-heading-label { background-color: var(--text-primary); }
+  .section-default .section-heading-rule  { border-color: var(--border-medium); }
 
-  .btn-primary { @apply bg-sow-blue text-white px-4 py-2 text-sm tracking-widest uppercase font-bold hover:bg-blue-900 transition-colors; }
-  .btn-outline  { @apply border-2 border-sow-blue text-sow-blue px-4 py-2 text-sm tracking-widest uppercase font-bold hover:bg-sow-blue hover:text-white transition-colors; }
-  .btn-red      { @apply bg-sow-red text-white px-4 py-2 text-sm tracking-widest uppercase font-bold hover:bg-red-700 transition-colors; }
-  .btn-gold     { @apply bg-sow-gold text-ink px-4 py-2 text-sm tracking-widest uppercase font-bold hover:bg-amber-500 transition-colors; }
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply px-4 py-2 text-sm tracking-widest uppercase font-bold transition-colors;
+    background-color: var(--sow-blue);
+    color: #ffffff;
+  }
+  .btn-primary:hover { background-color: #162d6e; }
+
+  .btn-outline {
+    @apply border-2 px-4 py-2 text-sm tracking-widest uppercase font-bold transition-colors;
+    border-color: var(--sow-blue);
+    color: var(--sow-blue);
+  }
+  .btn-outline:hover { background-color: var(--sow-blue); color: #ffffff; }
+
+  .btn-red {
+    @apply px-4 py-2 text-sm tracking-widest uppercase font-bold transition-colors;
+    background-color: var(--sow-red);
+    color: #ffffff;
+  }
+  .btn-red:hover { background-color: #b91c1c; }
+
+  .btn-gold {
+    @apply px-4 py-2 text-sm tracking-widest uppercase font-bold transition-colors;
+    background-color: var(--sow-gold);
+    color: #1a1a2e;
+  }
+  .btn-gold:hover { background-color: #b45309; color: #ffffff; }
+
+  /* ── Surface cards ── */
+  .surface-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-light);
+  }
+
+  /* ── Newsletter box ── */
+  .newsletter-box {
+    background-color: var(--sow-blue);
+    color: #ffffff;
+  }
 }
 
-/* Print styles */
-@media print {
-  .no-print { display: none !important; }
-  body { background: white; color: black; font-size: 12pt; }
-  .article-content { max-width: 100%; }
-  a { color: black; text-decoration: none; }
+/* ============================================================
+   DARK MODE — explicit overrides for Tailwind utility classes
+   These are needed because Tailwind generates static classes
+   that don't automatically pick up CSS variables.
+   ============================================================ */
+
+/* Backgrounds */
+.dark .bg-paper,
+.dark .bg-white    { background-color: var(--bg-surface) !important; }
+.dark .bg-cream    { background-color: var(--bg-subtle) !important; }
+.dark .bg-gray-50  { background-color: var(--bg-subtle) !important; }
+.dark .bg-gray-100 { background-color: var(--bg-muted) !important; }
+.dark .bg-gray-200 { background-color: var(--bg-muted) !important; }
+.dark .bg-amber-50 { background-color: var(--bg-subtle) !important; }
+
+/* Text */
+.dark .text-ink        { color: var(--text-primary) !important; }
+.dark .text-gray-900   { color: var(--text-primary) !important; }
+.dark .text-gray-800   { color: var(--text-primary) !important; }
+.dark .text-gray-700   { color: var(--text-secondary) !important; }
+.dark .text-gray-600   { color: var(--text-secondary) !important; }
+.dark .text-gray-500   { color: var(--text-muted) !important; }
+.dark .text-gray-400   { color: var(--text-faint) !important; }
+
+/* Borders */
+.dark .border-gray-50,
+.dark .border-gray-100,
+.dark .border-gray-200 { border-color: var(--border-light) !important; }
+.dark .border-gray-300 { border-color: var(--border-medium) !important; }
+.dark .border-ink      { border-color: var(--text-primary) !important; }
+
+/* Form inputs in dark mode */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: var(--bg-subtle) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-medium) !important;
 }
+.dark input::placeholder,
+.dark textarea::placeholder { color: var(--text-faint) !important; }
 
-/* Dark mode toggle (class-based) */
-.dark body { background-color: #0f0f1a; color: #f0efe8; }
+/* Article content in dark mode */
+.dark .article-content p,
+.dark .article-content ul,
+.dark .article-content ol { color: var(--text-secondary); }
+.dark .article-content h2,
+.dark .article-content h3,
+.dark .article-content strong { color: var(--text-primary); }
+.dark .article-content blockquote { background-color: var(--bg-subtle); color: var(--text-secondary); }
+.dark .article-content a { color: #93c5fd; }
+.dark .article-content hr { border-color: var(--border-medium); }
 
+/* Masthead / header */
+.dark header.bg-paper { background-color: var(--bg-surface) !important; }
+
+/* Sidebar cards */
+.dark aside .border-gray-100 { border-color: var(--border-light) !important; }
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
 @keyframes ticker-scroll {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -110,54 +269,19 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.animate-fade-in { animation: fade-in 0.4s ease both; }
-
-/* ============================================================
-   DARK MODE — class-based via ThemeProvider
-   ============================================================ */
-:root {
-  --bg-primary:   #fffef9;
-  --bg-secondary: #f5f3ee;
-  --text-primary: #1a1a2e;
-  --text-muted:   #6b7280;
-  --border:       #e5e7eb;
-}
-
-.dark {
-  --bg-primary:   #0f0f1a;
-  --bg-secondary: #1a1a2e;
-  --text-primary: #f0efe8;
-  --text-muted:   #9ca3af;
-  --border:       #374151;
-}
-
-.dark body               { background-color: var(--bg-primary); color: var(--text-primary); }
-.dark .bg-paper          { background-color: var(--bg-primary) !important; }
-.dark .bg-cream          { background-color: #1a1a2e !important; }
-.dark .bg-white          { background-color: #1e1e30 !important; }
-.dark .bg-gray-50        { background-color: #16162a !important; }
-.dark .bg-gray-100       { background-color: #1e1e30 !important; }
-.dark .text-ink          { color: var(--text-primary) !important; }
-.dark .text-gray-600,
-.dark .text-gray-500,
-.dark .text-gray-400     { color: var(--text-muted) !important; }
-.dark .border-gray-100,
-.dark .border-gray-200   { border-color: var(--border) !important; }
-.dark .border-ink        { border-color: var(--text-primary) !important; }
-
-/* Dark mode article content */
-.dark .article-content p  { color: #d1d5db; }
-.dark .article-content blockquote { background-color: #1e2a1e; border-color: #f59e0b; }
-.dark .article-content a  { color: #60a5fa; }
-
-/* Dark mode cards */
-.dark article            { background-color: var(--bg-secondary); }
-.dark .newsletter-box    { background-color: #1e3a8a; }
-
-/* Dark mode admin */
-.dark .bg-sow-blue        { background-color: #1e3a8a; }
-
 @keyframes progress-bar {
   from { width: 0%; }
   to   { width: 100%; }
+}
+
+.animate-fade-in { animation: fade-in 0.4s ease both; }
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
+@media print {
+  .no-print { display: none !important; }
+  body { background: white !important; color: black !important; font-size: 12pt; }
+  .article-content { max-width: 100%; }
+  a { color: black !important; text-decoration: none; }
 }

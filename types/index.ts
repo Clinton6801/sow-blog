@@ -6,6 +6,11 @@ export type Category = {
   created_at: string
 }
 
+export type GalleryImage = {
+  url: string
+  caption: string
+}
+
 export type Article = {
   id: string
   title: string
@@ -23,6 +28,11 @@ export type Article = {
   published_at: string | null
   updated_at: string
   categories?: Category
+  video_url?: string | null
+  video_type?: 'youtube' | 'vimeo' | 'upload' | null
+  gallery_images?: GalleryImage[]
+  tags?: string[]
+  reading_time?: number | null
 }
 
 export type Submission = {
