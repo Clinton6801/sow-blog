@@ -33,6 +33,7 @@ export type Article = {
   gallery_images?: GalleryImage[]
   tags?: string[]
   reading_time?: number | null
+  campus?: string | null
 }
 
 export type Submission = {

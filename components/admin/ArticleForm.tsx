@@ -36,6 +36,7 @@ interface ArticleFormProps {
     gallery_images?: GalleryImage[]
     tags?: string[]
     reading_time?: number | null
+    campus?: string
   }
 }
 
@@ -61,6 +62,7 @@ export default function ArticleForm({ initial = {} }: ArticleFormProps) {
     video_url: initial.video_url || '',
     video_type: initial.video_type || 'youtube',
     gallery_images: initial.gallery_images || [],
+    campus: initial.campus || '',
   })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -193,6 +195,16 @@ export default function ArticleForm({ initial = {} }: ArticleFormProps) {
               placeholder="Staff Writer"
               className="w-full border border-gray-300 px-3 py-2 text-sm bg-white outline-none focus:border-ink" />
           </div>
+        </div>
+
+        <div>
+          <label className="block text-[10px] tracking-[2px] uppercase font-bold mb-1">Campus</label>
+          <select name="campus" value={form.campus as string} onChange={handleChange}
+            className="w-full border border-gray-300 px-3 py-2 text-sm bg-white outline-none focus:border-ink">
+            <option value="">All Campuses</option>
+            <option value="Main Campus">Main Campus</option>
+            <option value="Alexandrite Campus">Alexandrite Campus</option>
+          </select>
         </div>
 
         <div>

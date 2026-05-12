@@ -6,11 +6,11 @@ import { supabase } from '@/lib/supabase'
 import { getAllCategories } from '@/lib/queries'
 
 interface Props {
-  searchParams: { q?: string; category?: string; author?: string; from?: string; to?: string }
+  searchParams: { q?: string; category?: string; author?: string; from?: string; to?: string; campus?: string }
 }
 
 export default async function SearchPage({ searchParams }: Props) {
-  const { q = '', category, author, from, to } = searchParams
+  const { q = '', category, author, from, to, campus } = searchParams
   const categories = await getAllCategories()
 
   let query = supabase
@@ -30,6 +30,9 @@ export default async function SearchPage({ searchParams }: Props) {
   if (author) {
     query = query.ilike('author_name', `%${author}%`)
   }
+  if (campus) {
+    query = query.eq('campus', campus)
+  }
   if (from) {
     query = query.gte('published_at', from)
   }
@@ -39,7 +42,7 @@ export default async function SearchPage({ searchParams }: Props) {
 
   const { data: results } = await query
   const articles = results || []
-  const hasFilters = !!(q || category || author || from || to)
+  const hasFilters = !!(q || category || author || from || to || campus)
 
   return (
     <>
@@ -60,7 +63,7 @@ export default async function SearchPage({ searchParams }: Props) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Filters sidebar */}
           <aside>
-            <SearchFilters categories={categories} current={searchParams} />
+          <SearchFilters categories={categories} current={searchParams} />
           </aside>
 
           {/* Results */}

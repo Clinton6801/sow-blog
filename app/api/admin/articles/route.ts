@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
   const {
     title, slug, excerpt, content, cover_image_url, category_id,
     author_name, author_role, status, featured,
-    video_url, video_type, gallery_images, tags, reading_time,
+    video_url, video_type, gallery_images, tags, reading_time, campus,
   } = body
 
   if (!title || !slug || !content) {
@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
     gallery_images: gallery_images || [],
     tags: tags || [],
     reading_time: reading_time || null,
+    campus: campus || null,
   }).select().single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

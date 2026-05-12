@@ -14,6 +14,7 @@ const navLinks = [
   { label: 'Opinion',      href: '/category/opinion',    color: 'hover:bg-sow-teal' },
   { label: 'Events',       href: '/events',              color: 'hover:bg-sow-gold' },
   { label: '⭐ Genius',    href: '/genius',              color: 'hover:bg-sow-gold' },
+  { label: '🏆 Honours',   href: '/honours',             color: 'hover:bg-sow-gold' },
   { label: '🏫 Clubs',     href: '/clubs',               color: 'hover:bg-sow-green' },
   { label: 'Gallery',      href: '/gallery',             color: 'hover:bg-sow-purple' },
   { label: 'About',        href: '/about',               color: 'hover:bg-ink' },

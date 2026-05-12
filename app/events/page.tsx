@@ -1,10 +1,24 @@
 import Masthead from '@/components/layout/Masthead'
 import Footer from '@/components/layout/Footer'
-import Image from 'next/image'
+import CalendarGrid from './CalendarGrid'
 import { supabase } from '@/lib/supabase'
 import { format, isPast } from 'date-fns'
 
 export const revalidate = 60
+
+function buildGoogleCalendarUrl(event: any): string {
+  const start = new Date(event.event_date)
+  const end   = new Date(start.getTime() + 2 * 60 * 60 * 1000)
+  const fmt   = (d: Date) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+  const params = new URLSearchParams({
+    action:   'TEMPLATE',
+    text:     event.title,
+    dates:    `${fmt(start)}/${fmt(end)}`,
+    details:  event.description || '',
+    location: event.location || 'Seat of Wisdom Group of Schools, Ibadan',
+  })
+  return `https://calendar.google.com/calendar/render?${params.toString()}`
+}
 
 export default async function EventsPage() {
   const { data: events } = await supabase
@@ -12,8 +26,9 @@ export default async function EventsPage() {
     .select('*')
     .order('event_date', { ascending: true })
 
-  const upcoming = events?.filter(e => !isPast(new Date(e.event_date))) || []
-  const past     = events?.filter(e =>  isPast(new Date(e.event_date))) || []
+  const all      = events || []
+  const upcoming = all.filter(e => !isPast(new Date(e.event_date)))
+  const past     = all.filter(e =>  isPast(new Date(e.event_date)))
 
   return (
     <>
@@ -23,125 +38,112 @@ export default async function EventsPage() {
 
         <div className="border-b-2 border-sow-gold pb-4 mb-8">
           <span className="category-badge badge-events mb-2 inline-block">Calendar</span>
-          <h1 className="font-serif text-5xl font-black text-sow-blue">School Events</h1>
-          <p className="text-gray-500 italic mt-1">Stay up to date with what's happening at SOW Schools</p>
+          <h1 className="font-serif text-5xl font-black" style={{ color: 'var(--text-primary)' }}>
+            School Events
+          </h1>
+          <p className="font-serif italic mt-1" style={{ color: 'var(--text-muted)' }}>
+            Stay up to date with what's happening at SOW Schools
+          </p>
         </div>
 
-        {/* Upcoming */}
-        <section className="mb-10">
-          <div className="section-heading section-gold mb-4">
-            <span className="section-heading-label">Upcoming Events ({upcoming.length})</span>
-            <div className="section-heading-rule" />
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-          {upcoming.length === 0 ? (
-            <p className="text-gray-400 italic">No upcoming events scheduled.</p>
-          ) : (
-            <div className="space-y-4">
-              {upcoming.map((event: any) => (
-                <div key={event.id}
-                  className="border border-gray-200 overflow-hidden hover:shadow-md transition-shadow group bg-white">
-                  <div className="flex flex-col sm:flex-row">
+          {/* Left: upcoming list */}
+          <div className="lg:col-span-1 space-y-6">
+            <section>
+              <div className="section-heading section-gold mb-4">
+                <span className="section-heading-label">Upcoming ({upcoming.length})</span>
+                <div className="section-heading-rule" />
+              </div>
 
-                    {/* Event image */}
-                    {event.image_url && (
-                      <div className="sm:w-56 w-full flex-shrink-0 overflow-hidden bg-gray-100 relative">
-                        <div className="aspect-video sm:aspect-auto sm:h-full relative">
-                          <Image
-                            src={event.image_url}
-                            alt={event.title}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="flex flex-1 min-w-0">
-                      {/* Colour date block */}
-                      <div
-                        className="flex-shrink-0 w-16 sm:w-20 flex flex-col items-center justify-center text-white py-4 px-2"
-                        style={{ backgroundColor: event.color || '#1e3a8a' }}>
-                        <span className="text-2xl sm:text-3xl font-black font-serif leading-none">
-                          {format(new Date(event.event_date), 'd')}
-                        </span>
-                        <span className="text-[10px] uppercase tracking-wider mt-0.5">
-                          {format(new Date(event.event_date), 'MMM')}
-                        </span>
-                        <span className="text-[9px] opacity-70">
-                          {format(new Date(event.event_date), 'yyyy')}
-                        </span>
-                      </div>
-
-                      {/* Content */}
-                      <div className="flex-1 px-4 py-4 min-w-0">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <h3 className="font-serif font-bold text-lg leading-snug group-hover:text-sow-blue transition-colors">
-                              {event.title}
-                            </h3>
-                            {event.description && (
-                              <p className="text-sm text-gray-600 mt-1 leading-relaxed line-clamp-2">
-                                {event.description}
-                              </p>
-                            )}
-                            <div className="flex flex-wrap gap-3 mt-2 text-[10px] text-gray-400 uppercase tracking-wide">
-                              {event.location && <span>📍 {event.location}</span>}
-                              <span>🏷 {event.category}</span>
-                            </div>
-                          </div>
-                          <span
-                            className="text-[9px] tracking-[1px] uppercase font-bold px-2 py-1 text-white flex-shrink-0 hidden sm:inline"
-                            style={{ backgroundColor: event.color || '#1e3a8a' }}>
-                            {event.category}
+              {upcoming.length === 0 ? (
+                <p className="text-sm italic" style={{ color: 'var(--text-faint)' }}>
+                  No upcoming events scheduled.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {upcoming.map((event: any) => (
+                    <div key={event.id}
+                      className="border overflow-hidden hover:shadow-sm transition-shadow group"
+                      style={{ borderColor: 'var(--border-light)', backgroundColor: 'var(--bg-surface)' }}>
+                      <div className="flex">
+                        {/* Date block */}
+                        <div className="flex-shrink-0 w-14 flex flex-col items-center justify-center text-white py-3 px-1"
+                          style={{ backgroundColor: event.color || '#1e3a8a' }}>
+                          <span className="text-xl font-black font-serif leading-none">
+                            {format(new Date(event.event_date), 'd')}
+                          </span>
+                          <span className="text-[9px] uppercase tracking-wider mt-0.5">
+                            {format(new Date(event.event_date), 'MMM')}
                           </span>
                         </div>
+                        {/* Content */}
+                        <div className="flex-1 px-3 py-2.5 min-w-0">
+                          <h3 className="font-serif font-bold text-sm leading-snug group-hover:text-sow-blue transition-colors"
+                            style={{ color: 'var(--text-primary)' }}>
+                            {event.title}
+                          </h3>
+                          <div className="flex flex-wrap gap-2 mt-0.5 text-[10px] uppercase tracking-wide"
+                            style={{ color: 'var(--text-faint)' }}>
+                            {event.location && <span>📍 {event.location}</span>}
+                            {event.campus && <span>🏫 {event.campus}</span>}
+                          </div>
+                          <a href={buildGoogleCalendarUrl(event)} target="_blank" rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 mt-1.5 text-[9px] tracking-[1px] uppercase font-bold hover:underline"
+                            style={{ color: event.color || '#1e3a8a' }}>
+                            + Save to Calendar
+                          </a>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
-        </section>
+              )}
+            </section>
 
-        {/* Past events */}
-        {past.length > 0 && (
-          <section>
-            <div className="section-heading section-default mb-4">
-              <span className="section-heading-label">Past Events</span>
+            {/* Past events */}
+            {past.length > 0 && (
+              <section>
+                <div className="section-heading section-default mb-3">
+                  <span className="section-heading-label">Past Events</span>
+                  <div className="section-heading-rule" />
+                </div>
+                <div className="space-y-1.5 opacity-60">
+                  {past.slice(0, 6).map((event: any) => (
+                    <div key={event.id} className="flex items-center gap-3 py-2 border-b"
+                      style={{ borderColor: 'var(--border-light)' }}>
+                      <div className="w-1.5 h-5 flex-shrink-0 rounded-full"
+                        style={{ backgroundColor: event.color || '#888' }} />
+                      <span className="text-xs font-bold w-12 flex-shrink-0"
+                        style={{ color: 'var(--text-faint)' }}>
+                        {format(new Date(event.event_date), 'MMM d')}
+                      </span>
+                      <span className="text-xs line-through flex-1 truncate"
+                        style={{ color: 'var(--text-faint)' }}>
+                        {event.title}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+
+          {/* Right: calendar grid */}
+          <div className="lg:col-span-2">
+            <div className="section-heading section-gold mb-4">
+              <span className="section-heading-label">Monthly View</span>
               <div className="section-heading-rule" />
             </div>
-            <div className="space-y-2 opacity-60">
-              {past.slice(0, 8).map((event: any) => (
-                <div key={event.id}
-                  className="flex items-center gap-4 py-3 border-b border-gray-100">
-                  {/* Small image thumbnail if available */}
-                  {event.image_url && (
-                    <div className="w-10 h-10 flex-shrink-0 overflow-hidden bg-gray-200 relative">
-                      <Image src={event.image_url} alt={event.title} fill className="object-cover" />
-                    </div>
-                  )}
-                  <div
-                    className="w-2 h-8 flex-shrink-0 rounded"
-                    style={{ backgroundColor: event.color || '#888' }} />
-                  <span className="text-sm font-bold text-gray-400 w-16 flex-shrink-0">
-                    {format(new Date(event.event_date), 'MMM d')}
-                  </span>
-                  <span className="text-sm text-gray-400 line-through flex-1 min-w-0 truncate">
-                    {event.title}
-                  </span>
-                  {event.location && (
-                    <span className="text-xs text-gray-300 hidden sm:block">{event.location}</span>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+            <CalendarGrid events={all} />
+            <p className="text-[10px] mt-3 italic" style={{ color: 'var(--text-faint)' }}>
+              Click any event on the calendar to view details and save to Google Calendar.
+            </p>
+          </div>
+        </div>
 
-        {(!events || events.length === 0) && (
-          <div className="text-center py-16 text-gray-400">
+        {all.length === 0 && (
+          <div className="text-center py-16" style={{ color: 'var(--text-faint)' }}>
             <p className="text-5xl mb-4">📅</p>
             <p className="italic">No events scheduled yet. Check back soon!</p>
           </div>

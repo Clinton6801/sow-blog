@@ -17,9 +17,11 @@ const navGroups = [
     label: 'Media & Pages',
     items: [
       { label: '⭐ Genius of Week',  href: '/admin/genius' },
+      { label: '🏆 Honours Board',   href: '/admin/honours' },
       { label: '🖼 Gallery',         href: '/admin/gallery' },
       { label: '📅 Events',          href: '/admin/events' },
       { label: '🏫 Clubs',           href: '/admin/clubs' },
+      { label: '📋 Term Digest',     href: '/admin/digest' },
       { label: '⚡ Ticker',          href: '/admin/ticker' },
     ],
   },
